@@ -1,0 +1,6 @@
+*~
+/CURRENT_DIR
+/nginx.conf
+/var
+/env
+/cache-update-conf.m4
