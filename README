@@ -12,11 +12,6 @@ First of all, do, as 'root':
 
 Then log off and log on.
 
-After starting with ./start.sh you must:
-
-    chmod o-rwx "/tmp/nginx-`id -u`.socket"
-    chgrp nginx "/tmp/nginx-`id -u`.socket"
-
 The main nginx configuration should work with a snippet like:
 
     location ~ /test/ {

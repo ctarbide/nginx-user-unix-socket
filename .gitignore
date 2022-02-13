@@ -4,3 +4,4 @@
 /var
 /env
 /cache-update-conf.m4
+/vars.inc.sh

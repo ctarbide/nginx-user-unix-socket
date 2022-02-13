@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -eu
+set -eu #x
 
 die(){ ev=$1; shift; for msg in "$@"; do echo "${msg}"; done; exit "${ev}"; }
 
@@ -30,22 +30,28 @@ if [ -f CURRENT_DIR ]; then
     . ./CURRENT_DIR
 fi
 
-LISTEN=unix:/tmp/nginx-`id -u`.socket
+SOCKET_FILE=/tmp/nginx-`id -u`.socket
+LISTEN=unix:${SOCKET_FILE}
 
 if [ \
         -z "${current_dir}" \
         -o "${current_dir}" != "${thisdir}" \
         -o ! -f cache-update-conf.m4 -o cache-update-conf.m4 -ot update-conf.sh \
         -o ! -f nginx.conf -o nginx.conf -ot nginx.conf.m4 \
+        -o ! -f vars.inc.sh -o vars.inc.sh -ot vars.inc.sh.m4 \
     ]; then
     echo 'current_dir="'"${thisdir}"'"' > CURRENT_DIR
     cat <<EOF>cache-update-conf.m4
 m4_define(\`USER',\`${USER}')m4_dnl
 m4_define(\`HOME',\`${HOME}')m4_dnl
 m4_define(\`PWD',\`${thisdir}')m4_dnl
+m4_define(\`SOCKET_FILE',\`${SOCKET_FILE}')m4_dnl
 m4_define(\`LISTEN',\`${LISTEN}')m4_dnl
 EOF
     ${M4} -P cache-update-conf.m4 nginx.conf.m4 > nginx.conf.tmp
     mv -f nginx.conf.tmp nginx.conf
     chmod a-w nginx.conf
+    ${M4} -P cache-update-conf.m4 vars.inc.sh.m4 > vars.inc.sh.tmp
+    mv -f vars.inc.sh.tmp vars.inc.sh
+    chmod a-w vars.inc.sh
 fi
